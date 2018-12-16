@@ -61,7 +61,7 @@ int showDisplay(void){
     }
     digitalWrite(LED,HIGH);     // turn on LCD backlight
     digitalWrite(RW,LOW);       // allow writing to LCD
-lcdhd = lcdInit(2,16,4,RS,EN,D4,D5,D6,D7,0,0,0,0);// initialize LCD and return “handle” used to handle LCD
+    lcdhd = lcdInit(2,16,4,RS,EN,D4,D5,D6,D7,0,0,0,0);// initialize LCD and return “handle” used to handle LCD
     if(lcdhd == -1){
         printf("lcdInit failed !");
         return 1;
