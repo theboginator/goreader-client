@@ -26,4 +26,11 @@ git clone git://git.drogon.net/wiringPi
 cd wiringPi
 ./build
 
-build c lcd driver with -lwiringPi -lwiringPiDev
+ensure Python 2.7 is installed
+git clone https://github.com/lthiery/SPI-Py.git
+cd ~/SPI-Py
+sudo python setup.py install
+
+cd ~
+git clone https://github.com/pimylifeup/MFRC522-python.git
+

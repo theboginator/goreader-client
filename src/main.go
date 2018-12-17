@@ -5,7 +5,6 @@ package main
   #cgo LDFLAGS: -L. -lwiringPi -lwiringPiDev
   #include "C_Libraries/hello.c"
   #include "C_Libraries/i2cdriver.c"
-  #include "
 */
 import "C"
 import (
@@ -29,9 +28,9 @@ func hello() error {
 	if err != nil {
 		return errors.New("error calling Hello function: " + err.Error())
 	}
-	_, err := C.showDisplay()
-	if err != nil {
-		return errors.New("error calling Driver function: " + err.Error())
+	_, error := C.showDisplay()
+	if error != nil {
+		return errors.New("error calling Driver function: " + error.Error())
 	}
 	return nil
 }
