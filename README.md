@@ -26,3 +26,4 @@ git clone git://git.drogon.net/wiringPi
 cd wiringPi
 ./build
 
+build c lcd driver with -lwiringPi -lwiringPiDev

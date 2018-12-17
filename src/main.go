@@ -1,7 +1,11 @@
 package main
 
-/*#include "C_Libraries/hello.c"
+/*
+  #cgo CFLAGS: -I.
+  #cgo LDFLAGS: -L. -lwiringPi -lwiringPiDev
+  #include "C_Libraries/hello.c"
   #include "C_Libraries/i2cdriver.c"
+  #include "
 */
 import "C"
 import (
