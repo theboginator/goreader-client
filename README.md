@@ -34,3 +34,5 @@ sudo python setup.py install
 cd ~
 git clone https://github.com/pimylifeup/MFRC522-python.git
 
+
+

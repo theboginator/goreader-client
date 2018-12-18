@@ -29,7 +29,7 @@ int lcdhd;// used to handle LCD
 int configureDisplay(void){
     int i;
 
-    if(wiringPiSetup() == -1){ //when initialize wiring failed,print messageto screen
+    if(wiringPiSetup() == -1){ //when initialize wiring failed,print message to screen
         printf("setup wiringPi failed !");
         return 1;
     }
@@ -46,7 +46,7 @@ int configureDisplay(void){
     }
 }
 
-int printLcd(char* text){
+void printLcd(char *text){
     lcdPosition(lcdhd,0,0);     // set the LCD cursor position to (0,0)
-    lcdPrintf(lcdhd,"CPU:%.2fC",CPU_temp);// Display CPU temperature on LCD
+    lcdPrintf(lcdhd, text);// Display CPU temperature on LCD
 }

@@ -20,6 +20,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/stianeikeland/go-rpio"
+	"log"
 	"net"
 	"os"
 	"time"
@@ -27,8 +28,13 @@ import (
 
 func setup() {
 	listener, err := net.Listen("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
-	C.configureDisplay()                                   //Setup the LCD
-	C.printLcd("Hello")
+	if err != nil {                                        //handle connection error
+		log.Fatal(err)
+	}
+	C.configureDisplay() //Setup the LCD
+	mystring := "testing... wait"
+	ctxt := C.CString(mystring) //Print the test message to LCD
+	C.printLcd(ctxt)
 
 }
 
