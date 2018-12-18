@@ -27,8 +27,8 @@ import (
 )
 
 func setup() {
-	listener, err := net.Listen("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
-	if err != nil {                                        //handle connection error
+	_, err := net.Listen("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
+	if err != nil {                                 //handle connection error
 		log.Fatal(err)
 	}
 	C.configureDisplay() //Setup the LCD
