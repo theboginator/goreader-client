@@ -1,3 +1,13 @@
+/*
+GoReader Client v0.5
+(c) 2018 Jacob Bogner
+This application runs on the card reader client (Raspberry Pi v3)
+Objectives:
+Listen to RFID reader for a new card scan
+Upon reading a new scan, prompt user to enter a transaction amount
+Connect to server and transmit the user ID and requested amount
+Display an "approved" or "denied" message based off the server's reply
+*/
 package main
 
 /*
@@ -8,29 +18,42 @@ package main
 */
 import "C"
 import (
-	"errors"
-	"log"
+	"fmt"
+	"github.com/stianeikeland/go-rpio"
+	"net"
+	"os"
+	"time"
+)
+
+func setup() {
+	listener, err := net.Listen("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
+	C.configureDisplay()                                   //Setup the LCD
+	C.printLcd("Hello")
+
+}
+
+var (
+	// Use mcu pin 10, corresponds to physical pin 19 on the pi
+	pin = rpio.Pin(10)
 )
 
 func main() {
-	//Call to void function without params
-	err := hello()
-	if err != nil {
-		log.Fatal(err)
+	setup()
+	// Open and map memory to access gpio, check for errors
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
-}
 
-//Hello is a C binding to the Hello World "C" program. As a Go user you could
-//use now the Hello function transparently without knowing that it is calling
-//a C function
-func hello() error {
-	_, err := C.hello() //We ignore first result as it is a void function
-	if err != nil {
-		return errors.New("error calling Hello function: " + err.Error())
+	// Unmap gpio memory when done
+	defer rpio.Close()
+
+	// Set pin to output mode
+	pin.Output()
+
+	// Toggle pin 20 times
+	for x := 0; x < 20; x++ {
+		pin.Toggle()
+		time.Sleep(time.Second / 5)
 	}
-	_, error := C.showDisplay()
-	if error != nil {
-		return errors.New("error calling Driver function: " + error.Error())
-	}
-	return nil
 }

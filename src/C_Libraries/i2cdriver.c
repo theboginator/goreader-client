@@ -25,30 +25,8 @@
 #define D7      BASE+7
 
 int lcdhd;// used to handle LCD
-void printCPUTemperature(){// sub function used to print CPU temperature
-    FILE *fp;
-    char str_temp[15];
-    float CPU_temp;
-    // CPU temperature data is stored in this directory.
-    fp=fopen("/sys/class/thermal/thermal_zone0/temp","r");
-    fgets(str_temp,15,fp);      // read file temp
-    CPU_temp = atof(str_temp)/1000.0;   // convert to Celsius degrees
-    printf("CPU's temperature : %.2f \n",CPU_temp);
-    lcdPosition(lcdhd,0,0);     // set the LCD cursor position to (0,0)
-    lcdPrintf(lcdhd,"CPU:%.2fC",CPU_temp);// Display CPU temperature on LCD
-    fclose(fp);
-}
-void printDataTime(){//used to print system time
-    time_t rawtime;
-    struct tm *timeinfo;
-    time(&rawtime);// get system time
-    timeinfo = localtime(&rawtime);// convert to local time
-    printf("%s \n",asctime(timeinfo));
-    lcdPosition(lcdhd,0,1);// set the LCD cursor position to (0,1)
-    lcdPrintf(lcdhd,"Time:%d:%d:%d",timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec);
-//Display system time on LCD
-}
-int showDisplay(void){
+
+int configureDisplay(void){
     int i;
 
     if(wiringPiSetup() == -1){ //when initialize wiring failed,print messageto screen
@@ -66,10 +44,9 @@ int showDisplay(void){
         printf("lcdInit failed !");
         return 1;
     }
-    while(1){
-        printCPUTemperature();// print CPU temperature
-        printDataTime();        // print system time
-        delay(1000);
-    }
-    return 0;
+}
+
+int printLcd(char* text){
+    lcdPosition(lcdhd,0,0);     // set the LCD cursor position to (0,0)
+    lcdPrintf(lcdhd,"CPU:%.2fC",CPU_temp);// Display CPU temperature on LCD
 }
