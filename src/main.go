@@ -13,7 +13,6 @@ package main
 /*
   #cgo CFLAGS: -I.
   #cgo LDFLAGS: -L. -lwiringPi -lwiringPiDev
-  #include "C_Libraries/hello.c"
   #include "C_Libraries/i2cdriver.c"
 */
 import "C"
@@ -27,9 +26,10 @@ import (
 )
 
 func setup() {
-	_, err := net.Listen("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
-	if err != nil {                                 //handle connection error
+	_, err := net.Dial("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
+	for err != nil {                              //handle connection error
 		log.Fatal(err)
+		continue
 	}
 	C.configureDisplay() //Setup the LCD
 	mystring := "testing... wait"
