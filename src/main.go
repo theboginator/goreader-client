@@ -17,49 +17,34 @@ package main
 */
 import "C"
 import (
-	"fmt"
-	"github.com/stianeikeland/go-rpio"
 	"log"
 	"net"
-	"os"
-	"time"
 )
 
-func setup() {
+func setup() { //Sets up the network connection and LCD, RFID reader, and LEDs
 	_, err := net.Dial("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
 	for err != nil {                              //handle connection error
 		log.Fatal(err)
 		continue
 	}
-	C.configureDisplay() //Setup the LCD
-	mystring := "testing... wait"
-	ctxt := C.CString(mystring) //Print the test message to LCD
-	C.printLcd(ctxt)
+	C.setupPi() //Setup the LCD
+	printLcd("testing... wait")
+	flashLED(lpin)
+	printLcd("Checking LED...")
 
 }
 
-var (
-	// Use mcu pin 10, corresponds to physical pin 19 on the pi
-	pin = rpio.Pin(10)
-)
+func flashLED(pin int) {
+	C.writePin(pin, 1)
+
+}
+
+func printLcd(input string) {
+	ctxt := C.CString(input) //Print the test message to LCD
+	C.printLcd(ctxt)
+}
 
 func main() {
 	setup()
-	// Open and map memory to access gpio, check for errors
-	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
 
-	// Unmap gpio memory when done
-	defer rpio.Close()
-
-	// Set pin to output mode
-	pin.Output()
-
-	// Toggle pin 20 times
-	for x := 0; x < 20; x++ {
-		pin.Toggle()
-		time.Sleep(time.Second / 5)
-	}
 }
