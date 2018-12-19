@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strconv"
+	"os"
 )
 
 var (
@@ -30,8 +30,6 @@ var (
 
 func configureConnections(conn net.Conn) { //Setup connection manager to handle incoming/outgoing data
 	go replyReader(conn)
-	go valReader(conn)
-
 }
 
 func sendID(conn net.Conn, id string) { //Send a "accepted/declined" message in the form of a boolean
@@ -46,30 +44,10 @@ func replyReader(conn net.Conn) { //Read userID sent from Pi
 	}
 }
 
-func valReader(conn net.Conn) { //Read transaction amount sent from Pi
-	input := bufio.NewScanner(conn)
-	for input.Scan() {
-		data := input.Text()
-		value, _ := strconv.ParseFloat(data, 64)
-		valueChan <- value
-	}
-}
-
 func setup() { //Sets up the network connection and LCD, RFID reader, and LEDs
-	_, err := net.Dial("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
-	for err != nil {                              //handle connection error
-		log.Fatal(err)
-		continue
-	}
+
 	C.setupPi() //Setup the LCD
 	printLcd("testing... wait")
-	flashLED(lpin)
-	printLcd("Checking LED...")
-
-}
-
-func flashLED(pin int) {
-	C.writePin(pin, 1)
 
 }
 
@@ -79,6 +57,25 @@ func printLcd(input string) {
 }
 
 func main() {
+	conn, err := net.Dial("tcp", "192.168.1.1:6000") //setup the network connection (set IP to server IP)
+	for err != nil {                                 //handle connection error
+		log.Fatal(err)
+		continue
+	}
 	setup()
+	for {
+		go configureConnections(conn)
+		fmt.Println("Enter account #: ")
+		reader := bufio.NewReader(os.Stdin)
+		account, _ := reader.ReadString('\n')
+		fmt.Println("Enter transaction amount: ")
+		charge, _ := reader.ReadString('\n')
+		msg := "Charging account " + account
+		C.printLcd(msg)
+		transmit := account + "," + charge
+		sendID(conn, transmit)
+		reply := <-replyChan
+		C.printLcd(reply)
+	}
 
 }
