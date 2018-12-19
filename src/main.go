@@ -52,8 +52,8 @@ func setup() { //Sets up the network connection and LCD, RFID reader, and LEDs
 }
 
 func printLcd(input string) {
-	ctxt := C.CString(input) //Print the test message to LCD
-	C.printLcd(ctxt)
+	ctxt := C.CString(input) //Convert string to C string
+	C.printLcd(ctxt)         //Print message to LCD
 }
 
 func main() {

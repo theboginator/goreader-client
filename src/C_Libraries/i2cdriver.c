@@ -1,5 +1,5 @@
 /*
-This code is an i2c/GPIO combination driver built with code provided by WiringPi (GPIO) and Freenove (LCD)
+This code is an i2c/GPIO combination driver built with code provided by WiringPi (GPIO) and Freenove (LCD supplier)
 */
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,8 +9,9 @@ This code is an i2c/GPIO combination driver built with code provided by WiringPi
 #include <time.h>
 
 #define pcf8574_address 0x27        // default I2C address of Pcf8574
-#define BASE 64         // BASE is not less than 64
-//////// Define the output pins of the PCF8574, which are directly connected to the LCD1602 pin.
+#define BASE 64         // BASE is 64
+
+// Define the output pins of the PCF8574, which are directly connected to the LCD1602 pin.
 #define RS      BASE+0
 #define RW      BASE+1
 #define EN      BASE+2
@@ -46,6 +47,13 @@ int setupPi(void){
 void printLcd(char *text){
     lcdPosition(lcdhd,0,0);     // set the LCD cursor position to (0,0)
     lcdPrintf(lcdhd, text);     // Print data to the screen
+}
+
+void flashLed(int pin){
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, HIGH);
+    delay(1000);
+    digitalWrite(pin, LOW);
 }
 
 
