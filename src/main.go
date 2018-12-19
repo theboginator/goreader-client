@@ -17,9 +17,43 @@ package main
 */
 import "C"
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"net"
+	"strconv"
 )
+
+var (
+	replyChan = make(chan string) //Channel for accepted/denied message coming from server
+)
+
+func configureConnections(conn net.Conn) { //Setup connection manager to handle incoming/outgoing data
+	go replyReader(conn)
+	go valReader(conn)
+
+}
+
+func sendID(conn net.Conn, id string) { //Send a "accepted/declined" message in the form of a boolean
+	fmt.Fprintln(conn, id)
+}
+
+func replyReader(conn net.Conn) { //Read userID sent from Pi
+	input := bufio.NewScanner(conn)
+	for input.Scan() {
+		data := input.Text()
+		replyChan <- data
+	}
+}
+
+func valReader(conn net.Conn) { //Read transaction amount sent from Pi
+	input := bufio.NewScanner(conn)
+	for input.Scan() {
+		data := input.Text()
+		value, _ := strconv.ParseFloat(data, 64)
+		valueChan <- value
+	}
+}
 
 func setup() { //Sets up the network connection and LCD, RFID reader, and LEDs
 	_, err := net.Dial("tcp", "192.168.1.1:8000") //setup the network connection (set IP to server IP)
